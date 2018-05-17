@@ -67,9 +67,16 @@ class TestIncludesExtractor
 
   def gather_and_store_includes(file, includes)
     mock_prefix      = @configurator.cmock_mock_prefix
+    test_prefix      = @configurator.project_test_file_prefix
     header_extension = @configurator.extension_header
     file_key         = form_file_key(file)
     @mocks[file_key] = []
+    sourcefile_name = file.gsub /.*#{test_prefix}/, '/' 
+
+    if includes.any? { |s| s.include?(sourcefile_name) }
+      index = includes.index{|s| s.include?(sourcefile_name)}
+      includes.delete_at(index)
+    end
 
     # add includes to lookup hash
     @includes[file_key] = includes
